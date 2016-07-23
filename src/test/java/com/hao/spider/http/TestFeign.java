@@ -1,14 +1,8 @@
 package com.hao.spider.http;
 
-import com.google.common.base.MoreObjects;
-import com.google.common.base.Objects;
 import feign.*;
 import feign.codec.Decoder;
 import feign.codec.ErrorDecoder;
-import feign.gson.GsonDecoder;
-import feign.jackson.JacksonDecoder;
-import feign.jackson.JacksonEncoder;
-import feign.ribbon.RibbonClient;
 import org.junit.Test;
 
 import java.io.IOException;
