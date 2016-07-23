@@ -24,6 +24,12 @@
 		<jsoup.version>1.8.3</jsoup.version>
 		<guava.version>19.0</guava.version>
 		<archaius.version>0.6.0</archaius.version>
+		<feign.version>8.18.0</feign.version>
+		<feign-jackson.version>8.18.0</feign-jackson.version>
+		<ribbon.version>2.2.0</ribbon.version>
+		<feign-ribbon.version>8.18.0</feign-ribbon.version>
+		<feign-gson.version>8.18.0</feign-gson.version>
+		<jackson.version>2.8.0</jackson.version>
 		<java.version>1.8</java.version>
 	</properties>
 
@@ -45,12 +51,53 @@
 			<version>3.0</version>
 		</dependency>
 
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-core</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+
+
+		<dependency>
+			<groupId>com.netflix.feign</groupId>
+			<artifactId>feign-gson</artifactId>
+			<version>${feign-gson.version}</version>
+		</dependency>
+
+
 
 		<dependency>
 			<groupId>com.netflix.archaius</groupId>
 			<artifactId>archaius-core</artifactId>
 			<version>${archaius.version}</version>
 		</dependency>
+
+		<dependency>
+			<groupId>com.netflix.feign</groupId>
+			<artifactId>feign-core</artifactId>
+			<version>${feign.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.netflix.feign</groupId>
+			<artifactId>feign-ribbon</artifactId>
+			<version>${feign-ribbon.version}</version>
+		</dependency>
+
+
+		<dependency>
+			<groupId>com.netflix.feign</groupId>
+			<artifactId>feign-jackson</artifactId>
+			<version>${feign-jackson.version}</version>
+		</dependency>
+
+
+		<dependency>
+			<groupId>com.netflix.ribbon</groupId>
+			<artifactId>ribbon-core</artifactId>
+			<version>${ribbon.version}</version>
+		</dependency>
+
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

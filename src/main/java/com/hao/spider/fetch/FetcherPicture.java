@@ -1,4 +1,4 @@
-package com.hao.spider;
+package com.hao.spider.fetch;
 
 import com.google.common.collect.Lists;
 import org.jsoup.Connection;
