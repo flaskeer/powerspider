@@ -30,6 +30,7 @@ public class FetcherPicture {
         Document doc = null;
         try {
             doc = Jsoup.connect(url)
+
                     .header("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.106 Safari/537.36")
                     .header("Host", "www.crtys.com")
                     .header("Referer","http://www.crtys.com/")
@@ -50,7 +51,7 @@ public class FetcherPicture {
         try {
             Connection.Response response = Jsoup.connect(imgUrl).ignoreContentType(true).timeout(60000).execute();
             byte[] bytes = response.bodyAsBytes();
-            fos = new FileOutputStream(new File("/Users/donghao/img/pic" + counter.incrementAndGet() + ".jpg"));
+            fos = new FileOutputStream(new File("/Users/user/img/pic" + counter.incrementAndGet() + ".jpg"));
             fos.write(bytes);
         } catch (IOException e) {
             download(imgUrl);

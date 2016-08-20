@@ -40,4 +40,9 @@ public class TestTime {
         String format = format(1468907425);
         System.out.println(format);
     }
+
+    @Test
+    public void testDate() {
+        System.out.println(new Date().getTime());
+    }
 }
