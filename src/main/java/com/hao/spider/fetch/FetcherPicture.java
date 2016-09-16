@@ -1,6 +1,9 @@
 package com.hao.spider.fetch;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.hao.spider.queue.Queue;
+import com.hao.spider.queue.RedisQueue;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -13,24 +16,22 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by donghao on 16/7/16.
  */
-public class FetcherPicture {
+public class FetcherPicture{
 
     private static final String BASE_URL = "http://www.crtys.com/";
     private static AtomicInteger counter = new AtomicInteger(0);
-    private static LinkedBlockingQueue<String> imgUrlQueue = new LinkedBlockingQueue<>();
+    private static Queue<String> imgUrlQueue = new RedisQueue<>();
     private static Executor executor = Executors.newFixedThreadPool(100);
 
     private static Document parse(String url) {
         Document doc = null;
         try {
             doc = Jsoup.connect(url)
-
                     .header("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.106 Safari/537.36")
                     .header("Host", "www.crtys.com")
                     .header("Referer","http://www.crtys.com/")
@@ -51,19 +52,25 @@ public class FetcherPicture {
         try {
             Connection.Response response = Jsoup.connect(imgUrl).ignoreContentType(true).timeout(60000).execute();
             byte[] bytes = response.bodyAsBytes();
-            fos = new FileOutputStream(new File("/Users/user/img/pic" + counter.incrementAndGet() + ".jpg"));
+            fos = new FileOutputStream(new File("/Users/donghao/img/pic" + counter.incrementAndGet() + ".jpg"));
             fos.write(bytes);
         } catch (IOException e) {
             download(imgUrl);
         } finally {
             try {
-                fos.close();
+                if (fos != null) {
+                    fos.close();
+                }
             } catch (IOException e) {
                 System.err.println(e.getMessage());
             }
         }
     }
 
+    /**
+     * 第一层链接
+     * @return
+     */
     private static List<String> firstLinks() {
         List<String> firstLinks = Lists.newArrayList();
         for (int i = 1; i <= 5 ; i++) {
@@ -73,6 +80,11 @@ public class FetcherPicture {
         return firstLinks;
     }
 
+    /**
+     * 二级链接
+     * @param firstLink
+     * @return
+     */
     private static List<String> secondLinks(String firstLink) {
         Document doc = parse(firstLink);
         List<String> secondLinks = Lists.newArrayList();
@@ -86,6 +98,11 @@ public class FetcherPicture {
         return secondLinks;
     }
 
+    /**
+     * 三级链接
+     * @param secondLink
+     * @return
+     */
     private static List<String> thirdLinks(String secondLink) {
         Document doc = parse(secondLink);
         List<String> thirdLinks = Lists.newArrayList();
@@ -99,6 +116,11 @@ public class FetcherPicture {
     }
 
 
+    /**
+     *四级链接
+     * @param thirdLinks
+     * @return
+     */
     private static List<String> fourLinks(String thirdLinks) {
         Document doc = parse(thirdLinks);
         List<String> fourLinks = Lists.newArrayList();
@@ -118,24 +140,21 @@ public class FetcherPicture {
         for (Element pElem : pElems) {
             String src = pElem.select("img").attr("src");
             System.out.println("img src:" + src);
-            try {
-                imgUrlQueue.put(src);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
+            imgUrlQueue.add(src);
         }
 
     }
     
     private static void downloadPicture() {
-        try {
-            String imgUrl = imgUrlQueue.take();
+        String imgUrl = imgUrlQueue.push();
+        if (!Strings.isNullOrEmpty(imgUrl)) {
             System.out.println("start downloading ..." + " url is:" + imgUrl);
             download(imgUrl);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
         }
     }
+
+
+
 
     public static void execute() {
 
@@ -158,7 +177,11 @@ public class FetcherPicture {
         for (int i = 0; i < threadCount; i++) {
             executor.execute(() -> {
                 while(true) {
-                    downloadPicture();
+                    try {
+                        downloadPicture();
+                    } catch (Exception e) {
+                        //ignore
+                    }
                 }
             });
         }

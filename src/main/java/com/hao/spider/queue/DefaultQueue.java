@@ -8,7 +8,11 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 public class DefaultQueue<T> implements Queue<T>{
 
-    private BlockingQueue<T> queue = new LinkedBlockingQueue<>(10000);
+    private BlockingQueue<T> queue;
+
+    public DefaultQueue() {
+        queue = new LinkedBlockingQueue<>(10000);
+    }
 
     @Override
     public void add(T body) {
