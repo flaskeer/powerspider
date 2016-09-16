@@ -4,6 +4,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.hao.spider.queue.Queue;
 import com.hao.spider.queue.RedisQueue;
+import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -19,12 +20,15 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
+ * please click main to run
  * Created by donghao on 16/7/16.
  */
+@Slf4j
 public class FetcherPicture{
 
     private static final String BASE_URL = "http://www.crtys.com/";
     private static AtomicInteger counter = new AtomicInteger(0);
+    //defaultQueue   redisQueue
     private static Queue<String> imgUrlQueue = new RedisQueue<>();
     private static Executor executor = Executors.newFixedThreadPool(100);
 
@@ -47,13 +51,14 @@ public class FetcherPicture{
         return doc;
     }
 
-    private static void download(String imgUrl) {
+    public static void download(String imgUrl) {
         FileOutputStream fos = null;
         try {
             Connection.Response response = Jsoup.connect(imgUrl).ignoreContentType(true).timeout(60000).execute();
             byte[] bytes = response.bodyAsBytes();
             fos = new FileOutputStream(new File("/Users/donghao/img/pic" + counter.incrementAndGet() + ".jpg"));
             fos.write(bytes);
+            log.info("download success,now the number is:{}",counter.get());
         } catch (IOException e) {
             download(imgUrl);
         } finally {
@@ -139,16 +144,16 @@ public class FetcherPicture{
         Elements pElems = doc.select(".imgbox > a > p");
         for (Element pElem : pElems) {
             String src = pElem.select("img").attr("src");
-            System.out.println("img src:" + src);
+            log.info("img src:{}", src);
             imgUrlQueue.add(src);
         }
 
     }
     
-    private static void downloadPicture() {
+    public static void downloadPicture() {
         String imgUrl = imgUrlQueue.push();
         if (!Strings.isNullOrEmpty(imgUrl)) {
-            System.out.println("start downloading ..." + " url is:" + imgUrl);
+            log.info("start downloading...url is :{}",imgUrl);
             download(imgUrl);
         }
     }
@@ -170,8 +175,29 @@ public class FetcherPicture{
             }
         }
 
-
     }
+
+    /**
+     * for rx-spider
+     * @return
+     */
+    public static List<String> allLinks() {
+        List<String> allLinks = Lists.newArrayList();
+        List<String> firstLinks = firstLinks();
+        for (String firstLink : firstLinks) {
+            List<String> secondLinks = secondLinks(firstLink);
+            for (String secondLink : secondLinks) {
+                List<String> thirdLinks = thirdLinks(secondLink);
+                for (String thirdLink : thirdLinks) {
+                    List<String> fourLinks = fourLinks(thirdLink);
+                    fourLinks.forEach(allLinks::add);
+                }
+            }
+        }
+        return allLinks;
+    }
+
+
 
     public static void submit(int threadCount) {
         for (int i = 0; i < threadCount; i++) {
