@@ -1,5 +1,6 @@
 package com.hao.spider.http;
 
+import com.hao.spider.parse.HtmlPage;
 import feign.*;
 import feign.codec.Decoder;
 import feign.codec.ErrorDecoder;
@@ -51,6 +52,13 @@ public class TestFeign {
         }
     }
 
+
+    @Test
+    public void testHtml() {
+        HtmlPage htmlPage = Feign.builder().target(HtmlPage.class, "https://github.com/OpenFeign/feign");
+        String page = htmlPage.getHtmlPage("");
+        System.out.println(page);
+    }
 
 
 
