@@ -1,18 +1,39 @@
 package com.hao.spider.queue;
 
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+
 /**
- * Created by donghao on 16/7/23.
+ * @author dongh38@ziroom
+ * @Date 16/10/15
+ * @Time 下午4:11
  */
-public class KafkaQueue<T> implements Queue<T>{
+public class KafkaQueue<T> extends AbstractKafkaQueue<T>{
+
+
 
 
     @Override
-    public void add(T body) {
+    protected String getTopic() {
+        return null;
+    }
+
+    @Override
+    protected String groupId() {
+        return null;
+    }
+
+    @Override
+    protected String getKey() {
+        return null;
+    }
+
+    @Override
+    protected void consume(ConsumerRecord<Object, Object> objectObjectConsumerRecord) {
 
     }
 
     @Override
-    public T push() {
+    protected Integer getPartition() {
         return null;
     }
 }

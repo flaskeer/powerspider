@@ -9,6 +9,7 @@ import rx.schedulers.Schedulers;
 
 import java.util.List;
 
+
 /**
  * @author dongh38@ziroom
  * @Date 16/9/16
@@ -42,13 +43,19 @@ public class RxSpider {
                 List<String> links = FetcherPicture.allLinks();
                 links.forEach(subscriber::onNext);
             }
-        });
+        }).filter(str -> str.endsWith(".jpg"));
+        List<String> links = FetcherPicture.allLinks();
+        Observable<String> listObservable = Observable.from(links);
+        listObservable.subscribe(observer);
+
+
         observable.observeOn(Schedulers.computation()).subscribe(observer);
 
     }
 
 
     public static void main(String[] args) {
+
         reactive();
     }
 

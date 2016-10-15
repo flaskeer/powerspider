@@ -34,23 +34,7 @@ public class FetcherPicture{
     private static Executor executor = Executors.newFixedThreadPool(100);
 
     private static Document parse(String url) {
-//        Document doc = null;
-//        try {
-//            doc = Jsoup.connect(url)
-//                    .header("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.106 Safari/537.36")
-//                    .header("Host", "www.crtys.com")
-//                    .header("Referer","http://www.crtys.com/")
-//                    .cookie("Hm_lvt_60a472097feb0e488430d0b13467a3aa","1468674446")
-//                    .cookie("Hm_lpvt_60a472097feb0e488430d0b13467a3aa","1468674907")
-//                    .cookie("supe_supe_refresh_items","0_1826")
-//                    .timeout(60000)
-//                    .ignoreContentType(true)
-//                    .get();
-//        } catch (IOException e) {
-//           doc = parse(url);
-//        }
-        Document doc = JsoupParser.parser(url,"");
-        return doc;
+        return JsoupParser.parser(url,"");
     }
 
     public static void download(String imgUrl) {

@@ -1,9 +1,6 @@
 package com.hao.spider.config;
 
-import com.netflix.config.DynamicIntProperty;
-import com.netflix.config.DynamicLongProperty;
-import com.netflix.config.DynamicPropertyFactory;
-import com.netflix.config.DynamicStringProperty;
+import com.netflix.config.*;
 
 /**
  * Created by donghao on 16/7/23.
@@ -25,5 +22,10 @@ public class ConfigLoader {
     public static Long getLong(String key,long defaultValue) {
         DynamicLongProperty longProperty = DynamicPropertyFactory.getInstance().getLongProperty(key, defaultValue);
         return longProperty.get();
+    }
+
+    public static Boolean getBoolean(String key,Boolean defaultValue) {
+        DynamicBooleanProperty booleanProperty = DynamicPropertyFactory.getInstance().getBooleanProperty(key,defaultValue);
+        return defaultValue;
     }
 }
